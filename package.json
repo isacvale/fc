@@ -1,0 +1,37 @@
+{
+  "name": "@dvo/fc",
+  "version": "0.0.1",
+  "description": "Helper function to create web components without using classes.",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel ./src -d ./lib",
+    "lint": "eslint ./src --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isacvale/fc.git"
+  },
+  "keywords": [
+    "web",
+    "components"
+  ],
+  "author": "isacvale",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/isacvale/fc/issues"
+  },
+  "homepage": "https://github.com/isacvale/fc#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.15.0",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.24.1",
+    "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.0",
+    "jest": "^27.0.6"
+  }
+}
