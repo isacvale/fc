@@ -1,26 +1,55 @@
 # fc
 
-# What and Why
+# What
 
-**fc** is a helper function for classless web components. Why? To make web-components more palatable to those who favor a code leaning more towards functional programming and less towards class based object orientation.
+**fc** is a helper function for classless web components. It allows you to declare a web-component by calling `fc(componentObject)` instead of the class boilerplate, and allows you to do away with the `this` keyword.
 
-Javascript has been designed with a beautiful object and prototypical inheritance system, and has subsequently added another complete paradigm on top of it, based on classes, in an attempt to make it more palatable to Java and C# programmers.
+# Why
 
-While these strives to give some universality to the language are, in my view, tolerable, I find unexcusable that webcomponents are implemented exclusively as classes. As a developers really interested in "vanilla" technologies, it pains me to see how superior functional components in React are, as compared to the cumbersome web components.
+To make web-components more palatable to me, or hopefully to anyone else who prefers functional programming over class-based object orientation.
 
-This small library is an attempt to create a piece of the technology that would improve the development experience without frameworks. The other pieces of these technologies are:
+Javascript was designed with a beautiful object and prototypical inheritance system. It was subsequently, modified to support another complete different paradigm, based on classes and object orientation, in an attempt to make it more palatable to Java and C# ("real") programmers.
 
-- @dvo/chips: allows for automatically lazy loading web components;
-- @dvo/stamp: allows dynamically populating containers with template components;
-- @dvo/raven: a lightweight state management tool.
+I find it tolerable that javascript is "frankensteined" to make it more accessible to all backgrounds. But I found it deep regrettable that web-components were locked in the other side of the fence, that is to say, that it requires the use of classes. The effect of this, to me, is that web components became ugly and cumbersome in their vanilla version, compared to the cheap and elegant functional components of React, for example.
+
+This tool is one of a set I've built in the hopes of makes websites without frameworks. The other tools:
+
+- [@dvo/chips](https://www.npmjs.com/package/@dvo/chips): allows for automatically lazy loading web components;
+- [@dvo/stamp](https://www.npmjs.com/package/@dvo/stamp): allows dynamically populating containers with template components;
+- [@dvo/raven](https://www.npmjs.com/package/@dvo/raven): a lightweight state management tool.
 
 # How
 
-**fc** is a function that receives a single object (we'l call it `component object`) where keys are mapped to a component's properties. That means if you want your element to have a `name` or `price` property, you simply add that key/value pair to your `component object`.
-Having said, there are a few keys to have in mind:
+**fc** is a function that receives a single object (we'll call it `component object`) defining the component's properties and methods. That means if you want your element to have an `x` property, you simply add that entry to your `component object`. Let's create a `hello-world` sample component:
 
-- `tag` refers to the tag that will invoke the component, and is the only required property. **fc** will look for a template with id equals to `tpl-<tag>` and use that to create the web-component.
-- `constructor`, `connectedCallback`, `disconnectedCallback`, `adoptedCallback`, and `attributeChangedCallback` are lifecycle hooks of the web components and work as expected.
+```html
+<template id="tpl-hello-world">
+  <p>hello-world</p>
+  <style>
+    p {
+      color: purple;
+      font-weight: bold;
+    }
+  </style>
+</template>
+```
+
+```js
+  import fc from "/node_modules/@dvo/fc/src/index.js";
+  fc({
+    tag: "hello-world",
+    connectedCallback: (el) => () => console.log("connectedCallback", el),
+    logMeFunction: (el) => (...args) => console.log(el),
+  });
+</script>
+```
+
+Notice you must create the markup of your component in the HTML, wrapped in a `<template>` tag. **fc** will look for the template whose id matches `tpl-<tag>`.
+
+Finally, notice that there are a few special `component object` keys to be aware of:
+
+- `tag` refers to the custom element tag that will invoke the component. It is the only required property. **fc** will look for a template with id equals to `tpl-<tag>` and use that to create the web-component.
+- `constructor`, `connectedCallback`, `disconnectedCallback`, `adoptedCallback`, and `attributeChangedCallback` are lifecycle hooks of the web components and work as expected. Set them with partial applications, as described below.
 - `observedAttributes` expects a list of strings identifying attributes that, when changed, should trigger `attributeChangedCallback`.
 
 ## Writing properties
@@ -29,15 +58,15 @@ Having said, there are a few keys to have in mind:
 1 - You can set a variable dependent on the instance of the component. For example, you can set an attribute on the element and derive a property by adding a function, which will run in the component's creation.
 
 ```js
+<rpg-character data-level="5"></rpg-character>;
+
 fc({
   tag: "rpg-character",
-  hp: el => +el.dataset.level * 10, // Will be run immediately
-})
-
-<rpg-character data-level="5"></rpg-character>
+  hp: (el) => +el.dataset.level * 10, // Will be run immediately, setting hp to 5
+});
 ```
 
-2 - Because functions are called immediately, to create an actual method, you must mak use of a partial application that first receives the element, then the normal arguments. The first part of the function (which receives the object) is run instantly, but the rest of the execution will be run at the appropriate time, and will still have closure over the element variable. For example:
+2 - Because functions are called immediately, to create an actual method, you must use a partial application that first receives the element, then the normal arguments. The first part of the function (receiving the object) is run instantly, but the rest of the execution will be run at the appropriate time, and will still have closure over the element variable. For example:
 
 ```js
 fc({
