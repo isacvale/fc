@@ -1,6 +1,6 @@
 {
   "name": "@dvo/fc",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Helper function to create web components without using classes.",
   "main": "index.js",
   "scripts": {
