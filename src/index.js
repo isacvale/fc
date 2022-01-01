@@ -50,7 +50,9 @@ const fc = (component) => {
     }
   }
 
-  customElements.define(tag, NewComponent);
+  try {
+    customElements.define(tag, NewComponent);
+  } catch (err) {}
 
   return NewComponent;
 };
