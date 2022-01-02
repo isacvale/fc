@@ -3,9 +3,12 @@ const safeRun =
   (...args) =>
     typeof func === "function" && func(...args);
 
-const fc = (component) => {
-  const { observedAttributes, tag } = component;
-
+const fc = ({
+  constructor: customConstructor = () => {},
+  observedAttributes = [],
+  props = {},
+  tag,
+}) => {
   const addProp = (key, value, that) => {
     const boundValue = typeof value === "function" ? value(that) : value;
     that[key] = boundValue;
@@ -21,32 +24,28 @@ const fc = (component) => {
       const el = document.querySelector(`#tpl-${tag}`).content.cloneNode(true);
       this.attachShadow({ mode: "open" }).appendChild(el);
       const that = this;
-      const {
-        observedAttributes,
-        constructor: customConstructor,
-        ...properties
-      } = component;
-      Object.entries(properties).forEach(([key, value]) =>
+
+      Object.entries(props).forEach(([key, value]) =>
         addProp(key, value, that)
       );
       this.observedAttributes = observedAttributes;
-      customConstructor && customConstructor(that);
+      customConstructor(that);
     }
 
     connectedCallback(...args) {
-      safeRun(this.connectedCallback)(...args);
+      this && safeRun(this.connectedCallback)(...args);
     }
 
     disconnectedCallback(...args) {
-      safeRun(this.disconnectedCallback)(...args);
+      this && safeRun(this.disconnectedCallback)(...args);
     }
 
     adoptedCallback(...args) {
-      safeRun(this.adoptedCallback)(...args);
+      this && safeRun(this.adoptedCallback)(...args);
     }
 
     attributeChangedCallback(...args) {
-      safeRun(this.attributeChangedCallback)(...args);
+      this && safeRun(this.attributeChangedCallback)(...args);
     }
   }
 
