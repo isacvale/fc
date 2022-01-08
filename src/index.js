@@ -29,7 +29,7 @@ const fc = ({
         addProp(key, value, that)
       );
       this.observedAttributes = observedAttributes;
-      customConstructor(that);
+      customConstructor(that)();
     }
 
     connectedCallback(...args) {
