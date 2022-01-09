@@ -25,7 +25,7 @@ const fc = ({ observedAttributes = [], props = {}, shadowDom = true, tag }) => {
         addProp(key, value, that)
       );
       this.observedAttributes = observedAttributes;
-      if (props.constructor) props.constructor(that)();
+      if (props.hasOwnProperty("constructor")) props.constructor(that)();
     }
 
     connectedCallback(...args) {
