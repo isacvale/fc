@@ -3,12 +3,7 @@ const safeRun =
   (...args) =>
     typeof func === "function" && func(...args);
 
-const fc = ({
-  constructor: customConstructor = () => {},
-  observedAttributes = [],
-  props = {},
-  tag,
-}) => {
+const fc = ({ observedAttributes = [], props = {}, shadowDom = true, tag }) => {
   const addProp = (key, value, that) => {
     const boundValue = typeof value === "function" ? value(that) : value;
     that[key] = boundValue;
@@ -22,14 +17,15 @@ const fc = ({
     constructor() {
       super();
       const el = document.querySelector(`#tpl-${tag}`).content.cloneNode(true);
-      this.attachShadow({ mode: "open" }).appendChild(el);
+      if (shadowDom) this.attachShadow({ mode: "open" }).appendChild(el);
+      else this.appendChild(el);
       const that = this;
 
       Object.entries(props).forEach(([key, value]) =>
         addProp(key, value, that)
       );
       this.observedAttributes = observedAttributes;
-      customConstructor(that)();
+      if (props.constructor) props.constructor(that)();
     }
 
     connectedCallback(...args) {
